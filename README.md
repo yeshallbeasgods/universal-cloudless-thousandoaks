@@ -1,2 +1,2 @@
 # Playwright-Typescript-Lean
-A demo repo to showcase heavier, non-POM testing against sauce demo
+A demo repo to showcase heavier regression testing against sauce demo
