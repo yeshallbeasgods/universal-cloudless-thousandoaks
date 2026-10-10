@@ -6,13 +6,15 @@ test-results/
 playwright-report/
 blob-report/
 playwright/.cache/
-
-# Visual regression snapshots that are auto-generated (not baselines)
-# Note: tests/visual/__snapshots__/ should NOT be gitignored — commit those
+playwright/.auth/
+allure-results/
+allure-report/
 
 # Environment
 .env
 .env.local
+CLAUDE.md
+.claude
 
 # Build output
 dist/

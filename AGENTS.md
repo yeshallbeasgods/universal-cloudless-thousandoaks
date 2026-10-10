@@ -1,0 +1,57 @@
+# AGENTS.md
+
+Playwright + TypeScript test suite for Sauce Demo (UI) and the OpenWeather API. Portfolio repo: correctness and readability matter more than volume.
+
+## Commands
+
+```bash
+npm ci                                      # install
+npx playwright install --with-deps chromium # browser (first run / CI); Chromium only
+npx playwright test                         # everything
+npx playwright test --grep @smoke           # by tag: @smoke, @api, @regression
+npx playwright test --project=chromium      # one project
+npx playwright test path/to/file.spec.ts:42 --headed   # one test, visible
+npx playwright test --ui                    # UI mode (time-travel debugging)
+npx playwright test --debug                 # inspector
+npx playwright show-report                  # HTML report
+npx playwright show-trace <trace.zip>       # open a trace
+npm run lint && npm run typecheck           # must pass before any commit
+```
+
+Scripts arrive with their tickets. If a command here doesn't exist yet, say so instead of inventing it.
+
+## Conventions (what the code won't tell you)
+
+- Import `test` and `expect` from `fixtures/`, never from `@playwright/test` directly in specs.
+- Specs contain no selectors. Locators live in page objects under `pages/`. Prefer `getByTestId` (the config maps it to `data-test`), then role/label/text. Avoid CSS and XPath.
+- Web-first assertions only (`await expect(locator)...`). No `waitForTimeout`, no manual sleeps, no committed `test.only`.
+- Strict TypeScript, no `any`. Type API responses with interfaces.
+- Tag every test: `@smoke`, `@regression`, or `@api`.
+- Data-driven cases come from typed arrays in `test-data/`, one generated test per entry. Don't copy-paste tests.
+- Secrets: `OPENWEATHER_API_KEY` comes from the environment (`.env` locally, a GitHub Secret in CI). Never hardcode it, log it, or attach it to reports. Never read or print `.env`.
+- Style and formatting belong to ESLint/Prettier, not this file. Run them.
+
+## Working agreement
+
+The owner is learning Playwright through this repo, so pace matters more than speed.
+
+1. One ticket per branch and PR. Stay inside the ticket's Scope; Out of Scope is a hard line.
+2. Plan first. For a ticket or any multi-file change, propose a short plan (files and steps) and wait for approval before editing.
+3. Work in small steps. Do one step, show it, stop for review. Don't scaffold things the ticket hasn't asked for yet.
+4. Explain briefly. The first time a Playwright idea appears (fixtures, auto-waiting, routing), give two or three sentences on why, plus one alternative considered.
+5. Don't fill in `TODO(human)` markers or any piece the owner said they will write. Offer a review instead.
+6. Ask before adding a dependency, editing `playwright.config.ts`, or touching anything under `.github/`.
+7. If a ticket is ambiguous, ask one question instead of guessing.
+8. Before saying "done", run lint, typecheck, and the tests that cover the change. Report what you ran and the real result. If something couldn't be run, say so.
+
+## Debugging loop
+
+Local: run the single failing test headed or with `--debug`, read `test-results/` (trace, screenshot), open the trace with `show-trace`, fix, re-run.
+
+CI: `gh run list --limit 5`, `gh run view <id> --log`, `gh run download <id>`, then open the trace artifact locally. Fix on a branch; CI must be green before merge. Never commit debug code.
+
+## Where to look
+
+- Project board tickets hold scope and acceptance criteria. Read the ticket first.
+- `README.md`: setup, how to run, migration notes. Update it when commands or behavior change.
+- `docs/qa/`: manual QA artifacts. Keep the coverage matrix honest.
