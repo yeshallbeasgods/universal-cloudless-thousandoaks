@@ -1,29 +1,29 @@
 {
-  "name": "universal-cloudless-thousandoaks",
-  "version": "1.0.0",
-  "description": "A demo repo to showcase heavier regression testing against sauce demo as well as showcase API testing and how utilities can work across languages",
-  "scripts": {
-    "typecheck": "tsc --noEmit",
-    "test": "playwright test --pass-with-no-tests",
-    "lint": "eslint ."
-  },
-  "keywords": [],
-  "author": "",
-  "license": "MIT",
-  "private": true,
-  "devDependencies": {
-    "@eslint/js": "^10.0.1",
-    "@playwright/test": "^1.64.0",
-    "@types/node": "^24.19.2",
-    "dotenv": "^18.0.7",
-    "eslint": "^10.12.0",
-    "eslint-config-prettier": "^10.1.8",
-    "eslint-plugin-playwright": "^2.12.1",
-    "prettier": "^3.9.10",
-    "typescript": "~6.0",
-    "typescript-eslint": "^8.71.1"
-  },
-  "engines": {
-    "node": ">=24"
-  }
+	"name": "universal-cloudless-thousandoaks",
+	"version": "1.0.0",
+	"description": "A demo repo to showcase heavier regression testing against sauce demo as well as showcase API testing and how utilities can work across languages",
+	"scripts": {
+		"typecheck": "tsc --noEmit",
+		"test": "playwright test --pass-with-no-tests",
+		"lint": "eslint ."
+	},
+	"keywords": [],
+	"author": "",
+	"license": "MIT",
+	"private": true,
+	"devDependencies": {
+		"@eslint/js": "^10.0.1",
+		"@playwright/test": "^1.64.0",
+		"@types/node": "^24.19.2",
+		"dotenv": "^18.0.7",
+		"eslint": "^10.12.0",
+		"eslint-config-prettier": "^10.1.8",
+		"eslint-plugin-playwright": "^2.12.1",
+		"prettier": "^3.9.10",
+		"typescript": "~6.0",
+		"typescript-eslint": "^8.71.1"
+	},
+	"engines": {
+		"node": ">=24"
+	}
 }
