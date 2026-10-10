@@ -5,9 +5,10 @@ Playwright + TypeScript test suite for Sauce Demo (UI) and the OpenWeather API. 
 ## Commands
 
 ```bash
+nvm use                                     # Node version from .nvmrc
 npm ci                                      # install
 npx playwright install --with-deps chromium # browser (first run / CI); Chromium only
-npx playwright test                         # everything
+npm test                                    # everything (passes while there are no tests yet)
 npx playwright test --grep @smoke           # by tag: @smoke, @api, @regression
 npx playwright test --project=chromium      # one project
 npx playwright test path/to/file.spec.ts:42 --headed   # one test, visible
@@ -35,7 +36,7 @@ Scripts arrive with their tickets. If a command here doesn't exist yet, say so i
 
 The owner is learning Playwright through this repo, so pace matters more than speed.
 
-1. One ticket per branch and PR. Stay inside the ticket's Scope; Out of Scope is a hard line.
+1. One ticket at a time. Stay inside the ticket's Scope; Out of Scope is a hard line.
 2. Plan first. For a ticket or any multi-file change, propose a short plan (files and steps) and wait for approval before editing.
 3. Work in small steps. Do one step, show it, stop for review. Don't scaffold things the ticket hasn't asked for yet.
 4. Explain briefly. The first time a Playwright idea appears (fixtures, auto-waiting, routing), give two or three sentences on why, plus one alternative considered.
