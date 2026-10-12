@@ -7,7 +7,10 @@ export class CheckoutPage {
 	readonly lastNameField: Locator
 	readonly postalCodeField: Locator
 	readonly continueButton: Locator
+	readonly cancelButton: Locator
 	readonly errorBanner: Locator
+	readonly items: Locator
+	readonly itemPrices: Locator
 	readonly subtotalLabel: Locator
 	readonly taxLabel: Locator
 	readonly totalLabel: Locator
@@ -20,7 +23,10 @@ export class CheckoutPage {
 		this.lastNameField = page.getByTestId('lastName')
 		this.postalCodeField = page.getByTestId('postalCode')
 		this.continueButton = page.getByTestId('continue')
+		this.cancelButton = page.getByTestId('cancel')
 		this.errorBanner = page.getByTestId('error')
+		this.items = page.getByTestId('inventory-item')
+		this.itemPrices = page.getByTestId('inventory-item-price')
 		this.subtotalLabel = page.getByTestId('subtotal-label')
 		this.taxLabel = page.getByTestId('tax-label')
 		this.totalLabel = page.getByTestId('total-label')
@@ -36,6 +42,17 @@ export class CheckoutPage {
 
 	async continueToOverview(): Promise<void> {
 		await this.continueButton.click()
+	}
+
+	async cancel(): Promise<void> {
+		await this.cancelButton.click()
+	}
+
+	// Prices of the items listed on the overview page (step two).
+	async getItemPrices(): Promise<number[]> {
+		await this.items.first().waitFor() // allInnerTexts() does not wait for the list to render
+		const prices = await this.itemPrices.allInnerTexts()
+		return prices.map(parseCurrency)
 	}
 
 	async getItemTotal(): Promise<number> {

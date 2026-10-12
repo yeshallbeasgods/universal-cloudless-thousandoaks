@@ -29,10 +29,17 @@ universal-cloudless-thousandoaks/
 │   ├── InventoryPage.ts
 │   └── LoginPage.ts
 ├── test-data/                      # Typed data arrays that drive generated tests
+│   ├── checkoutCases.ts            # Valid customer and required-field cases
+│   ├── loginCases.ts               # Invalid-login cases, one generated test each
+│   ├── products.ts                 # Product names shared by specs
+│   └── users.ts                    # Sauce Demo's special users
 ├── tests/
 │   ├── api/
 │   ├── e2e/
-│   │   └── login.spec.ts
+│   │   ├── cart.spec.ts
+│   │   ├── checkout.spec.ts
+│   │   ├── login.spec.ts
+│   │   └── special-users.spec.ts
 │   └── visual/
 ├── utils/
 │   ├── currency.ts                 # "$29.99" -> 29.99
@@ -107,7 +114,7 @@ npx playwright test --grep @api
 ```bash
 npx playwright test --project=chromium
 npx playwright test tests/e2e/login.spec.ts
-npx playwright test tests/e2e/login.spec.ts:7 --headed
+npx playwright test tests/e2e/login.spec.ts:9 --headed
 ```
 
 ### Debug
@@ -150,6 +157,9 @@ npm run typecheck
 - **Strict TypeScript and type-aware linting**, including `no-floating-promises` to catch missing `await`.
 - **Environment validation.** `requireEnv` fails with a clear message when a required variable is missing.
 - **Tagged runs** by `@smoke`, `@regression` and `@api`.
+- **Data-driven tests.** Typed arrays in `test-data/` generate one named test per case.
+- **Numeric checks on money.** Totals are parsed to numbers and compared with `toBeCloseTo(x, 2)`, which absorbs floating-point noise.
+- **Known defects documented as tests.** Sauce Demo's `problem_user` and `error_user` have real bugs. Those tests assert the correct behavior and use `test.fail()`, so they pass while the bug exists and start failing the day it is fixed.
 
 ## Working with AI agents
 
@@ -165,15 +175,17 @@ MIT — see [LICENSE](LICENSE) for details.
 
 - [x] Project scaffold — Playwright config, strict TypeScript, ESLint and Prettier, Dependabot
 - [x] Page objects for login, inventory, cart and checkout
-- [x] Custom fixtures delivering the page objects
+- [x] Custom fixtures delivering the page objects, including `loggedInPage`
+- [x] Login and cart smoke suite
+- [x] Checkout specs, including numeric checks of the totals
+- [x] Special-user coverage (`performance_glitch_user`, `problem_user`, `error_user`)
 
 **In progress**
 
-- [ ] `loggedInPage` fixture and the first e2e specs
+- [ ] OpenWeather API tests
 
 **Upcoming**
 
-- [ ] Checkout and regression specs, data-driven from `test-data/`
 - [ ] API tests — OpenWeather current weather endpoint in the same runner
 - [ ] Mocking with network interception
 - [ ] CI workflow and reporting

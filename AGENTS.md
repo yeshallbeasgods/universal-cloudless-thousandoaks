@@ -30,6 +30,8 @@ Scripts arrive with their tickets. If a command here doesn't exist yet, say so i
 - Tag every test: `@smoke`, `@regression`, or `@api`.
 - Data-driven cases come from typed arrays in `test-data/`, one generated test per entry. Don't copy-paste tests.
 - Secrets: `OPENWEATHER_API_KEY` comes from the environment (`.env` locally, a GitHub Secret in CI). Never hardcode it, log it, or attach it to reports. Never read or print `.env`.
+- A known app defect gets a test that asserts the correct behavior, marked `test.fail(true, '<reason>')`. Never assert the buggy behavior. Remove the marker when the defect is fixed.
+- Compare money as parsed numbers with `toBeCloseTo(expected, 2)`, never as strings or with `toBe` on a sum.
 - Read environment variables through `requireEnv` (`utils/env.ts`), not raw `process.env`. Turn price text like `$29.99` into numbers with `parseCurrency` (`utils/currency.ts`).
 - Style and formatting belong to ESLint/Prettier, not this file. Run them.
 

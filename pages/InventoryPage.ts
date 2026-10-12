@@ -42,6 +42,13 @@ export class InventoryPage {
 		return prices.map(parseCurrency)
 	}
 
+	async getItemImageSources(): Promise<string[]> {
+		await this.items.first().waitFor()
+		return this.items
+			.getByRole('img')
+			.evaluateAll((images) => images.map((image) => image.getAttribute('src') ?? ''))
+	}
+
 	async openCart(): Promise<void> {
 		await this.cartLink.click()
 	}
