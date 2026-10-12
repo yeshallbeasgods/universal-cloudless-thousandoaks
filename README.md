@@ -1,4 +1,5 @@
 # Playwright + TypeScript Test Automation
+UI tests (Sauce Demo), API tests (OpenWeather), and GitHub Actions CI. Work in progress.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
