@@ -8,7 +8,7 @@ Playwright + TypeScript test suite for Sauce Demo (UI) and the OpenWeather API. 
 nvm use                                     # Node version from .nvmrc
 npm ci                                      # install
 npx playwright install --with-deps chromium # browser (first run / CI); Chromium only
-npm test                                    # everything (passes while there are no tests yet)
+npm test                                    # everything
 npx playwright test --grep @smoke           # by tag: @smoke, @api, @regression
 npx playwright test --project=chromium      # one project
 npx playwright test path/to/file.spec.ts:42 --headed   # one test, visible
@@ -30,7 +30,15 @@ Scripts arrive with their tickets. If a command here doesn't exist yet, say so i
 - Tag every test: `@smoke`, `@regression`, or `@api`.
 - Data-driven cases come from typed arrays in `test-data/`, one generated test per entry. Don't copy-paste tests.
 - Secrets: `OPENWEATHER_API_KEY` comes from the environment (`.env` locally, a GitHub Secret in CI). Never hardcode it, log it, or attach it to reports. Never read or print `.env`.
+- Read environment variables through `requireEnv` (`utils/env.ts`), not raw `process.env`. Turn price text like `$29.99` into numbers with `parseCurrency` (`utils/currency.ts`).
 - Style and formatting belong to ESLint/Prettier, not this file. Run them.
+
+## Writing page objects and specs
+
+- Never guess locators. Inspect the running app first (a browser tool, `npx playwright codegen`, or a scratch script) and use the `data-test` IDs it actually exposes. A typo inside a string compiles fine and only fails at runtime.
+- Sauce Demo is a single-page app: the URL changes before the new page renders. When probing, wait for an element unique to the target page, not the URL. Raw reads (`count()`, `allInnerTexts()`, `$$eval`) do not auto-wait; actions and `expect(locator)` do.
+- Check each new page object against the live site with a scratch spec, then delete it. Never commit probes or scratch files.
+- Register new page objects in `fixtures/index.ts`; specs ask for them by name in the test signature.
 
 ## Working agreement
 
