@@ -1,4 +1,4 @@
-# Playwright-Typescript-Robust
+# Playwright + TypeScript Test Automation
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
