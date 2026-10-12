@@ -2,8 +2,6 @@ import { defineConfig, devices } from '@playwright/test'
 import dotenv from 'dotenv'
 import path from 'path'
 
-// Load .env before the config reads process.env. In CI the variables come from
-// the environment itself, and dotenv does not override values that are already set.
 dotenv.config({ path: path.resolve(__dirname, '.env'), quiet: true })
 
 export default defineConfig({

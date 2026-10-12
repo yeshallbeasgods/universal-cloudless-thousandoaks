@@ -15,11 +15,11 @@ export class LoginPage {
 		this.errorBanner = page.getByTestId('error')
 	}
 
-	async goto() {
+	async goto(): Promise<void> {
 		await this.page.goto('/')
 	}
 
-	async login(user: string, pass: string) {
+	async login(user: string, pass: string): Promise<void> {
 		await this.usernameField.fill(user)
 		await this.passwordField.fill(pass)
 		await this.loginButton.click()
