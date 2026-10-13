@@ -5,3 +5,8 @@ export function requireEnv(name: string): string {
 	}
 	return value
 }
+
+// For values a test can run without. Returns undefined when the variable is missing or empty.
+export function optionalEnv(name: string): string | undefined {
+	return process.env[name] || undefined
+}

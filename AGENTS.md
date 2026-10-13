@@ -10,7 +10,8 @@ npm ci                                      # install
 npx playwright install --with-deps chromium # browser (first run / CI); Chromium only
 npm test                                    # everything
 npx playwright test --grep @smoke           # by tag: @smoke, @api, @regression
-npx playwright test --project=chromium      # one project
+npx playwright test --project=chromium      # UI tests only
+npx playwright test --project=api           # API tests only (no browser; needs OPENWEATHER_API_KEY)
 npx playwright test path/to/file.spec.ts:42 --headed   # one test, visible
 npx playwright test --ui                    # UI mode (time-travel debugging)
 npx playwright test --debug                 # inspector
@@ -29,7 +30,7 @@ Scripts arrive with their tickets. If a command here doesn't exist yet, say so i
 - Strict TypeScript, no `any`. Type API responses with interfaces.
 - Tag every test: `@smoke`, `@regression`, or `@api`.
 - Data-driven cases come from typed arrays in `test-data/`, one generated test per entry. Don't copy-paste tests.
-- Secrets: `OPENWEATHER_API_KEY` comes from the environment (`.env` locally, a GitHub Secret in CI). Never hardcode it, log it, or attach it to reports. Never read or print `.env`.
+- Secrets: `OPENWEATHER_API_KEY` comes from the environment (`.env` locally, a GitHub Secret in CI). Never hardcode it, log it, or attach it to reports. Never read or print `.env`. OpenWeather takes the key in the URL, and Playwright prints URLs in errors and traces, so API calls go through `OpenWeatherClient` (`utils/`), which redacts the key. In API specs never use `toBeOK()`, never log URLs or full responses, and keep `trace: 'off'` on the `api` project.
 - A known app defect gets a test that asserts the correct behavior, marked `test.fail(true, '<reason>')`. Never assert the buggy behavior. Remove the marker when the defect is fixed.
 - Compare money as parsed numbers with `toBeCloseTo(expected, 2)`, never as strings or with `toBe` on a sum.
 - Read environment variables through `requireEnv` (`utils/env.ts`), not raw `process.env`. Turn price text like `$29.99` into numbers with `parseCurrency` (`utils/currency.ts`).

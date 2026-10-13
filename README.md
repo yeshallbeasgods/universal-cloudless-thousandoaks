@@ -29,12 +29,14 @@ universal-cloudless-thousandoaks/
 │   ├── InventoryPage.ts
 │   └── LoginPage.ts
 ├── test-data/                      # Typed data arrays that drive generated tests
+│   ├── cities.ts                   # Cities for the OpenWeather tests
 │   ├── checkoutCases.ts            # Valid customer and required-field cases
 │   ├── loginCases.ts               # Invalid-login cases, one generated test each
 │   ├── products.ts                 # Product names shared by specs
 │   └── users.ts                    # Sauce Demo's special users
 ├── tests/
 │   ├── api/
+│   │   └── openweather.spec.ts
 │   ├── e2e/
 │   │   ├── cart.spec.ts
 │   │   ├── checkout.spec.ts
@@ -43,7 +45,9 @@ universal-cloudless-thousandoaks/
 │   └── visual/
 ├── utils/
 │   ├── currency.ts                 # "$29.99" -> 29.99
-│   └── env.ts                      # requireEnv: required environment variables
+│   ├── env.ts                      # requireEnv / optionalEnv: environment variables
+│   ├── openWeatherClient.ts        # Typed API client that redacts the key from errors
+│   └── types.ts                    # Interfaces for OpenWeather responses
 ├── playwright.config.ts            # baseURL, reporters, trace, projects
 ├── tsconfig.json
 ├── eslint.config.mjs
@@ -112,7 +116,8 @@ npx playwright test --grep @api
 ### Run one project, file or test
 
 ```bash
-npx playwright test --project=chromium
+npx playwright test --project=chromium   # UI tests
+npx playwright test --project=api        # API tests, no browser (needs OPENWEATHER_API_KEY)
 npx playwright test tests/e2e/login.spec.ts
 npx playwright test tests/e2e/login.spec.ts:9 --headed
 ```

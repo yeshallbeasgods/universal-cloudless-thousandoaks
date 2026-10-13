@@ -3,7 +3,8 @@ import { LoginPage } from '../pages/LoginPage'
 import { InventoryPage } from '../pages/InventoryPage'
 import { CartPage } from '../pages/CartPage'
 import { CheckoutPage } from '../pages/CheckoutPage'
-import { requireEnv } from '../utils/env'
+import { optionalEnv, requireEnv } from '../utils/env'
+import { OpenWeatherClient } from '../utils/openWeatherClient'
 
 export type Fixtures = {
 	loginPage: LoginPage
@@ -11,6 +12,7 @@ export type Fixtures = {
 	cartPage: CartPage
 	checkoutPage: CheckoutPage
 	loggedInPage: Page
+	openWeather: OpenWeatherClient
 }
 
 export const test = base.extend<Fixtures>({
@@ -26,6 +28,15 @@ export const test = base.extend<Fixtures>({
 		await loginPage.login(user, pass)
 		await expect(page).toHaveURL(/inventory/)
 		await use(page)
+	},
+
+	// Unlike the UI credentials, a missing API key skips the test instead of failing it,
+	// so the suite stays green on machines (or CI forks) that have no key.
+	openWeather: async ({ request }, use) => {
+		const apiKey = optionalEnv('OPENWEATHER_API_KEY') ?? ''
+		// eslint-disable-next-line playwright/no-skipped-test -- deliberate: no key means no API tests
+		test.skip(apiKey === '', 'OPENWEATHER_API_KEY is not set')
+		await use(new OpenWeatherClient(request, apiKey))
 	},
 })
 

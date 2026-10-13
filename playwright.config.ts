@@ -20,7 +20,19 @@ export default defineConfig({
 	projects: [
 		{
 			name: 'chromium',
+			testIgnore: '**/api/**',
 			use: { ...devices['Desktop Chrome'] },
+		},
+		{
+			// No browser: these tests only use the built-in `request` fixture.
+			name: 'api',
+			testDir: './tests/api',
+			use: {
+				baseURL: 'https://api.openweathermap.org',
+				// Traces record every request URL, and OpenWeather puts the API key in the URL;
+				// prevents key from appearing in logs or be exposed to agent.
+				trace: 'off',
+			},
 		},
 	],
 })

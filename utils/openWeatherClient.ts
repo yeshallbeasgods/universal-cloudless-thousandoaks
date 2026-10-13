@@ -1,0 +1,44 @@
+import type { APIRequestContext, APIResponse } from '@playwright/test'
+import type { ApiResult, CurrentWeather } from './types'
+
+export interface WeatherOptions {
+	// undefined: use the client's key. null: send no key at all. A string: send that key instead.
+	apiKey?: string | null
+	units?: 'metric' | 'imperial' | 'standard'
+}
+
+export class OpenWeatherClient {
+	readonly request: APIRequestContext
+	private readonly apiKey: string
+
+	constructor(request: APIRequestContext, apiKey: string) {
+		this.request = request
+		this.apiKey = apiKey
+	}
+
+	// T says what shape the caller expects the body to have. It is a promise, not a check.
+	// Use CurrentWeather for success and OpenWeatherError for failures.
+	async getCurrentWeather<T = CurrentWeather>(city: string, options: WeatherOptions = {}): Promise<ApiResult<T>> {
+		const key = options.apiKey === undefined ? this.apiKey : options.apiKey
+		const params: Record<string, string> = { q: city, units: options.units ?? 'metric' }
+		if (key !== null) {
+			params.appid = key
+		}
+
+		let response: APIResponse
+		try {
+			response = await this.request.get('/data/2.5/weather', { params })
+		} catch (error) {
+			// Playwright's network errors print the full URL, and the key is in it. Redact before rethrowing.
+			// eslint-disable-next-line preserve-caught-error -- a `cause` would carry the unredacted message
+			throw new Error(redactApiKey(error instanceof Error ? error.message : String(error)))
+		}
+
+		// Return only what tests need. Never hand back the response: response.url() contains the key.
+		return { status: response.status(), body: (await response.json()) as T }
+	}
+}
+
+export function redactApiKey(text: string): string {
+	return text.replace(/appid=[\w-]*/g, 'appid=***')
+}
