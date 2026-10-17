@@ -182,8 +182,10 @@ jobs:
                   API_RESULT: ${{ needs.api.result }}
               run: |
                   mkdir -p publish/history
-                  cp -r site/. publish/
+                  # Order matters: site/report/index.html must land after the report, so it replaces Allure's
+                  # plugin-chooser page and "Back to overview" returns to the landing page instead.
                   if [ -d allure-report ]; then cp -r allure-report publish/report; fi
+                  cp -r site/. publish/
                   if [ -f allure-history/history.jsonl ]; then cp allure-history/history.jsonl publish/history/history.jsonl; fi
                   node scripts/buildStatus.mts publish/status.json
             - name: Upload the site
