@@ -1,0 +1,1 @@
+{"id":"b108a0e06773e7af9a857b1d9f79a13d.259864bbb84e0941359ea9e4c0db04ac","fullName":"api/openweather.spec.ts › OpenWeather errors › an unknown city returns 404 with an error message","name":"an unknown city returns 404 with an error message","status":"passed","testResultsByEnv":{"default":"2d0d622b0aa6b34091f9d140c3183fa7"}}
