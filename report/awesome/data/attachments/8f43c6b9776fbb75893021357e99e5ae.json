@@ -1,0 +1,59 @@
+{
+  "request": {
+    "method": "GET",
+    "path": "/data/2.5/weather",
+    "params": {
+      "q": "London",
+      "units": "imperial",
+      "appid": "***"
+    }
+  },
+  "response": {
+    "status": 200,
+    "body": {
+      "coord": {
+        "lon": -0.1257,
+        "lat": 51.5085
+      },
+      "weather": [
+        {
+          "id": 801,
+          "main": "Clouds",
+          "description": "few clouds",
+          "icon": "02n"
+        }
+      ],
+      "base": "stations",
+      "main": {
+        "temp": 49.08,
+        "feels_like": 45.63,
+        "temp_min": 47.59,
+        "temp_max": 50.61,
+        "pressure": 1033,
+        "humidity": 78,
+        "sea_level": 1033,
+        "grnd_level": 1030
+      },
+      "visibility": 10000,
+      "wind": {
+        "speed": 8.05,
+        "deg": 340
+      },
+      "clouds": {
+        "all": 13
+      },
+      "dt": 1792270056,
+      "sys": {
+        "type": 2,
+        "id": 2075535,
+        "country": "GB",
+        "sunrise": 1792218440,
+        "sunset": 1792256647
+      },
+      "timezone": 3600,
+      "id": 2643743,
+      "name": "London",
+      "cod": 200
+    }
+  }
+}

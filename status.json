@@ -2,17 +2,17 @@
   "schema": 1,
   "project": "universal-cloudless-thousandoaks",
   "overall": "passed",
-  "generatedAt": "2026-10-17T20:42:40.541Z",
+  "generatedAt": "2026-10-17T20:53:37.857Z",
   "trigger": "push",
   "branch": "main",
   "commit": {
-    "sha": "df8cfcb3e01852777438ed36ea0c28dcafadc1d0",
-    "short": "df8cfcb",
-    "url": "https://github.com/yeshallbeasgods/universal-cloudless-thousandoaks/commit/df8cfcb3e01852777438ed36ea0c28dcafadc1d0"
+    "sha": "e37c3951e79287c2f3cde5740673ed20ee489ed8",
+    "short": "e37c395",
+    "url": "https://github.com/yeshallbeasgods/universal-cloudless-thousandoaks/commit/e37c3951e79287c2f3cde5740673ed20ee489ed8"
   },
   "run": {
-    "id": "39067746990",
-    "url": "https://github.com/yeshallbeasgods/universal-cloudless-thousandoaks/actions/runs/39067746990"
+    "id": "39068512439",
+    "url": "https://github.com/yeshallbeasgods/universal-cloudless-thousandoaks/actions/runs/39068512439"
   },
   "layers": {
     "lint": "success",
@@ -28,7 +28,8 @@
     "flaky": 0
   },
   "links": {
-    "report": "report/",
+    "report": "report/awesome/",
+    "trends": "report/dashboard/",
     "testHealth": null
   }
 }
