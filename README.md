@@ -5,6 +5,8 @@ UI tests (Sauce Demo), API tests (OpenWeather), and GitHub Actions CI. Work in p
 [![Playwright Tests](https://github.com/yeshallbeasgods/universal-cloudless-thousandoaks/actions/workflows/playwright.yml/badge.svg)](https://github.com/yeshallbeasgods/universal-cloudless-thousandoaks/actions/workflows/playwright.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
+**Live:** [Allure report](https://yeshallbeasgods.github.io/universal-cloudless-thousandoaks/report/awesome/) · [Trends dashboard](https://yeshallbeasgods.github.io/universal-cloudless-thousandoaks/report/dashboard/) · [Latest results](https://yeshallbeasgods.github.io/universal-cloudless-thousandoaks/). The suite also runs nightly, so the report is never more than a day old.
+
 A Playwright + TypeScript test automation framework targeting the [Sauce Demo](https://www.saucedemo.com) application and the OpenWeather API. Built to demonstrate professional QA engineering practices: page objects delivered through custom fixtures, web-first assertions, strict typing with type-aware linting, tagged test runs, and API testing in the same runner as the UI tests.
 
 Secrets are treated as a first-class concern. The OpenWeather key lives only in `.env` or a GitHub Secret. It is redacted from error messages and report attachments, kept out of traces, and scoped to the single CI step that needs it. CI also fails loudly when the key is missing instead of letting tests skip silently.
@@ -227,8 +229,11 @@ npm run typecheck
 | `@regression` | Broader and negative-path coverage |
 | `@api`        | OpenWeather API tests              |
 
-## Key Features
+## What this repo demonstrates
 
+- **UI and API coverage in one runner.** Sauce Demo login, cart and checkout (including numeric checks of the totals and the site's built-in problem users), plus OpenWeather schema, data-quality and negative-case tests. Both share one config, one fixtures file and the same reports.
+- **Reporting that serves different readers.** A custom terminal reporter for whoever is at the keyboard, Playwright's HTML report for traces, a JSON file for scripts and AI agents, and an Allure report with a trends dashboard published to GitHub Pages.
+- **CI with a nightly run.** Lint, then UI and API jobs, then a report and publish step. The nightly run catches drift in Sauce Demo and the OpenWeather API.
 - **Fixture-delivered page objects.** Specs ask for `loginPage`, `inventoryPage` and the rest by name. No base class or page manager is needed.
 - **Lazy locators with auto-waiting.** Locators resolve when an action runs, and actions wait for the element, so specs contain no sleeps.
 - **Web-first assertions** that retry until they pass or time out.
@@ -240,6 +245,47 @@ npm run typecheck
 - **Numeric checks on money.** Totals are parsed to numbers and compared with `toBeCloseTo(x, 2)`, which absorbs floating-point noise.
 - **Readable failures.** A custom terminal reporter shows where, why and EXPECTED vs RECEIVED for every failure (see [What a failure looks like](#what-a-failure-looks-like)).
 - **Known defects documented as tests.** Sauce Demo's `problem_user` and `error_user` have real bugs. Those tests assert the correct behavior and use `test.fail()`, so they pass while the bug exists and start failing the day it is fixed.
+
+## Coming from Selenium + Python
+
+This is the second project in a series. The first, [ephemeral-blazing-berserker](https://github.com/yeshallbeasgods/ephemeral-blazing-berserker), tests the same application with Selenium and pytest. The table maps each piece of that suite to its counterpart here. It is a map of concepts, not a record of ported code.
+
+| Selenium + Python (Project 1)                                    | Playwright + TypeScript (this repo)                                                                                                                     |
+| ---------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `BasePage` shared base class                                     | No base class. A page object takes a `Page` and exposes lazy `Locator` properties.                                                                      |
+| `PageManager` registry                                           | Fixtures. A test lists `loginPage`, `cartPage` and so on in its signature and receives them.                                                            |
+| `conftest.py` fixtures                                           | `fixtures/index.ts`, built with `test.extend`. Fixtures can depend on each other (`loggedInPage` uses `loginPage`).                                     |
+| `--custom-browser`, `--custom-device`, `--user-type` options     | `projects` in `playwright.config.ts` (`--project=chromium` or `api`), user names in `test-data/users.ts`, credentials from `.env` through `requireEnv`. |
+| `WaitUtils`: explicit and fluent waits, stability polling        | Auto-waiting on every action, plus web-first assertions (`await expect(locator)...`) that retry. There is no wait helper module.                        |
+| `BrowserUtils.robust_click`: retry on stale elements             | Locators are looked up again on every action, so there are no stale element references to handle.                                                       |
+| `javascript_click` to get past overlays                          | Not needed so far. Actions wait until the element is actionable, and `click({ force: true })` exists as a last resort.                                  |
+| Shared `HeaderComponent` (cart badge, navigation)                | Not built here yet. The cart badge is read through `InventoryPage.cartBadge`. A small component class would be the equivalent.                          |
+| `pytest -m smoke`, `-m "not mobile"`                             | Tags: `{ tag: '@smoke' }` on the test and `--grep @smoke` (`--grep-invert` for "not") on the command line.                                              |
+| Markers registered in `pytest.ini`                               | Tags need no registration, so a typo in a tag is not caught.                                                                                            |
+| `pytest -k name`                                                 | `--grep name`, or run one test by `file:line`.                                                                                                          |
+| `requirements.txt` and a virtual environment                     | `package.json`, a lockfile and `node_modules`. Node itself is pinned in `.nvmrc`.                                                                       |
+| `webdriver-manager`                                              | `npx playwright install`. Browsers are pinned to the library version.                                                                                   |
+| `DebugUtils.dump_page_state`: screenshot, elements and JS errors | A trace per failure (DOM snapshots, network, console), a screenshot, and an `error-context.md` page snapshot.                                           |
+| pytest-html (Allure planned)                                     | Playwright's HTML report, an Allure 3 report with a trends dashboard, a custom terminal reporter and a JSON results file.                               |
+| `ruff`                                                           | ESLint (typescript-eslint, eslint-plugin-playwright) and Prettier.                                                                                      |
+| Separate lint and test workflows                                 | One workflow: lint, then UI and API jobs, then report and publish, plus a nightly schedule.                                                             |
+| Mobile emulation through Chrome options                          | Not covered in this repo. Playwright's device descriptors are the equivalent.                                                                           |
+
+### What got simpler
+
+- **No waiting code.** Project 1 needs a module of wait strategies. Here, actions wait for the element and assertions retry, so specs contain no sleeps and no wait helpers.
+- **No driver management.** Browsers install per Playwright version, and every test gets its own isolated browser context. Tests cannot leak state into each other, and they run in parallel by default.
+- **One layer instead of two.** Fixtures replace both the base class and the page manager.
+- **Failure analysis comes built in.** A trace shows the page, the network and the console at each step of a failure, which replaces most of a custom debugging utility.
+- **UI and API tests share everything.** One runner, one config, one set of fixtures and one report.
+
+### What got harder
+
+- **`async` and `await` everywhere.** A missing `await` does not fail loudly. The test just races ahead, which is why `no-floating-promises` is enforced by lint.
+- **Types need care.** Response shapes need interfaces, and interfaces are erased at runtime, so the shape tests still have to check the real data.
+- **Some reads do not wait.** `count()` and `allInnerTexts()` return whatever is on the page right now. Stale elements are gone, and this is the new class of timing bug that replaces them.
+- **A bigger configuration surface.** Projects, reporters, fixtures and tags all live in code, and tags are not validated.
+- **Tool versions are coupled.** TypeScript stays on 6.0 because typescript-eslint does not support 7 yet, and a Playwright upgrade can change the error text the custom reporter reads.
 
 ## CI
 
@@ -301,3 +347,4 @@ MIT — see [LICENSE](LICENSE) for details.
 
 - [ ] Mocking with network interception
 - [ ] Test-health tracking and manual QA artifacts in `docs/qa/`
+- [ ] Port selected Project 1 utilities (debugging helpers, shared component objects) and record what changed in the table above
