@@ -4,3 +4,12 @@ updates:
       directory: /
       schedule:
           interval: weekly
+      groups:
+          # allure-playwright pins an exact allure-js-commons version, so they must update together.
+          allure:
+              patterns:
+                  - 'allure*'
+    - package-ecosystem: github-actions
+      directory: /
+      schedule:
+          interval: weekly

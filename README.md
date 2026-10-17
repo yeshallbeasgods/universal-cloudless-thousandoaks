@@ -2,6 +2,7 @@
 
 UI tests (Sauce Demo), API tests (OpenWeather), and GitHub Actions CI. Work in progress.
 
+[![Playwright Tests](https://github.com/yeshallbeasgods/universal-cloudless-thousandoaks/actions/workflows/playwright.yml/badge.svg)](https://github.com/yeshallbeasgods/universal-cloudless-thousandoaks/actions/workflows/playwright.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 A Playwright + TypeScript test automation framework targeting the [Sauce Demo](https://www.saucedemo.com) application and the OpenWeather API. Built to demonstrate professional QA engineering practices: page objects delivered through custom fixtures, web-first assertions, strict typing with type-aware linting, tagged test runs, and API testing in the same runner as the UI tests.
@@ -198,6 +199,20 @@ npm run typecheck
 - **Data-driven tests.** Typed arrays in `test-data/` generate one named test per case.
 - **Numeric checks on money.** Totals are parsed to numbers and compared with `toBeCloseTo(x, 2)`, which absorbs floating-point noise.
 - **Known defects documented as tests.** Sauce Demo's `problem_user` and `error_user` have real bugs. Those tests assert the correct behavior and use `test.fail()`, so they pass while the bug exists and start failing the day it is fixed.
+
+## CI
+
+`.github/workflows/playwright.yml` runs on every push and pull request to `main`, nightly at 06:00 UTC (to catch drift in
+Sauce Demo and the OpenWeather API), and on demand from the Actions tab.
+
+- **Lint** runs first (`npm run lint` and `npm run typecheck`).
+- **UI tests** and **API tests** then run in parallel as separate jobs, so a failure shows which layer broke. Only the UI
+  job installs a browser.
+- `OPENWEATHER_API_KEY` is a repository secret, available to the API test step only. Fork PRs do not receive secrets, so
+  their API tests skip. The API job fails if the key is missing on any other run, so a skipped suite cannot pass silently.
+  Dependabot PRs read **Dependabot secrets**, so the key is stored there as well.
+- Every run uploads `allure-results-*` and `playwright-report-*`. Failed runs also upload `test-results-*` (traces and
+  screenshots). Download them from the run's summary page and open a trace with `npx playwright show-trace`.
 
 ## Working with AI agents
 

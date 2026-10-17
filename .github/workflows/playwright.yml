@@ -1,0 +1,129 @@
+name: Playwright Tests
+
+on:
+    push:
+        branches: [main]
+    pull_request:
+        branches: [main]
+    schedule:
+        # Nightly at 06:00 UTC. Catches drift in Sauce Demo and the OpenWeather API.
+        - cron: '0 6 * * *'
+    workflow_dispatch:
+
+permissions:
+    contents: read
+
+# A newer push to a PR cancels the older run. Pushes to main and nightly runs always finish.
+concurrency:
+    group: ${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+env:
+    # Sauce Demo's public demo credentials. These are not secrets.
+    BASE_URL: https://www.saucedemo.com
+    STANDARD_USER: standard_user
+    PASSWORD: secret_sauce
+
+jobs:
+    lint:
+        name: Lint
+        runs-on: ubuntu-latest
+        timeout-minutes: 10
+        steps:
+            - uses: actions/checkout@v7
+            - uses: actions/setup-node@v7
+              with:
+                  node-version-file: .nvmrc
+                  cache: npm
+            - run: npm ci
+            - run: npm run lint
+            - run: npm run typecheck
+
+    ui:
+        name: UI tests
+        needs: lint
+        runs-on: ubuntu-latest
+        timeout-minutes: 20
+        steps:
+            - uses: actions/checkout@v7
+            - uses: actions/setup-node@v7
+              with:
+                  node-version-file: .nvmrc
+                  cache: npm
+            - run: npm ci
+            - run: npx playwright install --with-deps chromium
+            # Not `npm test`: its pretest step clears allure-results, which CI does not need.
+            - name: Run UI tests
+              run: npx playwright test --project=chromium
+            - name: Upload Allure results
+              if: ${{ !cancelled() }}
+              uses: actions/upload-artifact@v7
+              with:
+                  name: allure-results-ui
+                  path: allure-results
+                  retention-days: 14
+            - name: Upload Playwright report
+              if: ${{ !cancelled() }}
+              uses: actions/upload-artifact@v7
+              with:
+                  name: playwright-report-ui
+                  path: playwright-report
+                  retention-days: 14
+            - name: Upload traces and screenshots
+              if: ${{ failure() }}
+              uses: actions/upload-artifact@v7
+              with:
+                  name: test-results-ui
+                  path: test-results
+                  retention-days: 14
+
+    api:
+        name: API tests
+        needs: lint
+        runs-on: ubuntu-latest
+        timeout-minutes: 10
+        steps:
+            - uses: actions/checkout@v7
+            - uses: actions/setup-node@v7
+              with:
+                  node-version-file: .nvmrc
+                  cache: npm
+            - run: npm ci
+            # Without the key every API test skips and the job would still pass. Fail loudly instead.
+            # Fork PRs never receive secrets, so they are exempt. Dependabot PRs read Dependabot secrets,
+            # not Actions secrets, so the key must also be added under Settings > Secrets > Dependabot.
+            - name: Require the API key
+              if: ${{ github.event.pull_request.head.repo.fork != true }}
+              env:
+                  OPENWEATHER_API_KEY: ${{ secrets.OPENWEATHER_API_KEY }}
+              run: |
+                  if [ -z "$OPENWEATHER_API_KEY" ]; then
+                    echo "::error::OPENWEATHER_API_KEY is not available to this run"
+                    exit 1
+                  fi
+            # The key is set on this step only, so no other step (npm ci, for example) can read it.
+            - name: Run API tests
+              env:
+                  OPENWEATHER_API_KEY: ${{ secrets.OPENWEATHER_API_KEY }}
+              run: npx playwright test --project=api
+            - name: Upload Allure results
+              if: ${{ !cancelled() }}
+              uses: actions/upload-artifact@v7
+              with:
+                  name: allure-results-api
+                  path: allure-results
+                  retention-days: 14
+            - name: Upload Playwright report
+              if: ${{ !cancelled() }}
+              uses: actions/upload-artifact@v7
+              with:
+                  name: playwright-report-api
+                  path: playwright-report
+                  retention-days: 14
+            - name: Upload test results
+              if: ${{ failure() }}
+              uses: actions/upload-artifact@v7
+              with:
+                  name: test-results-api
+                  path: test-results
+                  retention-days: 14
