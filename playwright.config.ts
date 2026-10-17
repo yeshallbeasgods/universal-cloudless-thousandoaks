@@ -10,7 +10,14 @@ export default defineConfig({
 	forbidOnly: !!process.env.CI,
 	retries: process.env.CI ? 2 : 0,
 	workers: process.env.CI ? 1 : undefined,
-	reporter: 'html',
+	reporter: [
+		// Terminal output: failures first, with file:line:col and EXPECTED/RECEIVED labels.
+		['./reporters/clearFailureReporter.ts'],
+		// open: 'never' stops a failing run from starting a report server that blocks the terminal.
+		['html', { open: 'never' }],
+		// Structured results for agents and scripts.
+		['json', { outputFile: 'test-results/results.json' }],
+	],
 	use: {
 		baseURL: process.env.BASE_URL,
 		// Sauce Demo marks elements with data-test, so getByTestId targets that attribute.

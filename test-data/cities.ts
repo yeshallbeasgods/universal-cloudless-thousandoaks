@@ -9,4 +9,5 @@ export const cities: CityCase[] = [
 	{ city: 'London', country: 'GB' },
 	{ city: 'Tokyo', country: 'JP' },
 	{ city: 'Sydney', country: 'AU' },
+	{ city: 'Andalusia', country: 'US' },
 ]

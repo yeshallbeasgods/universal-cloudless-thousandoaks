@@ -1,4 +1,4 @@
-// Shapes of the OpenWeather "current weather" response, trimmed to the fields our tests use.
+// Shapes of the OpenWeather "current weather" response, trimmed to the fields these tests use.
 // These are compile-time descriptions only: nothing checks that a real response matches them.
 // The response-shape tests do that check at runtime.
 

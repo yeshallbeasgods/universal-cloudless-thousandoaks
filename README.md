@@ -1,4 +1,5 @@
 # Playwright + TypeScript Test Automation
+
 UI tests (Sauce Demo), API tests (OpenWeather), and GitHub Actions CI. Work in progress.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
@@ -29,6 +30,8 @@ universal-cloudless-thousandoaks/
 │   ├── CheckoutPage.ts
 │   ├── InventoryPage.ts
 │   └── LoginPage.ts
+├── reporters/
+│   └── clearFailureReporter.ts     # Terminal reporter: failures first, EXPECTED/RECEIVED labels
 ├── test-data/                      # Typed data arrays that drive generated tests
 │   ├── cities.ts                   # Cities for the OpenWeather tests
 │   ├── checkoutCases.ts            # Valid customer and required-field cases
@@ -138,6 +141,20 @@ The HTML report is generated after every run:
 ```bash
 npx playwright show-report
 ```
+
+### Reading failures
+
+Three reports are written on every run:
+
+- **Terminal:** a custom reporter (`reporters/clearFailureReporter.ts`) prints each failure as a block with the
+  location (`file:line:col`, clickable in VS Code), the reason, the code frame, `EXPECTED` and `RECEIVED` labels
+  instead of Playwright's `-`/`+` diff, and the command to re-run just that test.
+- **HTML:** `npx playwright show-report`.
+- **JSON:** `test-results/results.json`, structured results for scripts and AI agents.
+
+The terminal reporter works from the text of Playwright's error messages, so a Playwright upgrade can change what it
+sees. It falls back to the raw message whenever it does not recognize a format, so a failure is never hidden. After
+bumping `@playwright/test`, run a failing test and check that the output still reads correctly.
 
 ### Checks
 

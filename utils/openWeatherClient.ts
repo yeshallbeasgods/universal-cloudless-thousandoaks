@@ -20,7 +20,7 @@ export class OpenWeatherClient {
 	// Use CurrentWeather for success and OpenWeatherError for failures.
 	async getCurrentWeather<T = CurrentWeather>(city: string, options: WeatherOptions = {}): Promise<ApiResult<T>> {
 		const key = options.apiKey === undefined ? this.apiKey : options.apiKey
-		const params: Record<string, string> = { q: city, units: options.units ?? 'metric' }
+		const params: Record<string, string> = { q: city, units: options.units ?? 'imperial' }
 		if (key !== null) {
 			params.appid = key
 		}

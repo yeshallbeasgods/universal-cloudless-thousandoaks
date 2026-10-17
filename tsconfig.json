@@ -10,5 +10,5 @@
 		"noUncheckedIndexedAccess": true,
 		"types": ["node"]
 	},
-	"include": ["playwright.config.ts", "tests", "pages", "fixtures", "test-data", "utils"]
+	"include": ["playwright.config.ts", "tests", "pages", "fixtures", "test-data", "utils", "reporters"]
 }

@@ -58,7 +58,7 @@ The owner is learning Playwright through this repo, so pace matters more than sp
 
 ## Debugging loop
 
-Local: run the single failing test headed or with `--debug`, read `test-results/` (trace, screenshot), open the trace with `show-trace`, fix, re-run.
+Local: run the single failing test headed or with `--debug`, read `test-results/` (trace, screenshot), open the trace with `show-trace`, fix, re-run. The terminal prints each failure as a block with `file:line:col`, a reason, and EXPECTED/RECEIVED labels; the same results are machine-readable in `test-results/results.json`.
 
 CI: `gh run list --limit 5`, `gh run view <id> --log`, `gh run download <id>`, then open the trace artifact locally. Fix on a branch; CI must be green before merge. Never commit debug code.
 
