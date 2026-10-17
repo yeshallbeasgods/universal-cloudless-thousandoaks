@@ -47,6 +47,7 @@ function render(status) {
 			t.failed ? `${t.failed} failed` : '',
 			t.broken ? `${t.broken} broken` : '',
 			t.skipped ? `${t.skipped} skipped` : '',
+			t.flaky ? `${t.flaky} flaky` : '',
 		].filter(Boolean)
 		$('fact-tests').textContent =
 			`${t.passed} passed of ${t.total}${extras.length ? ` (${extras.join(', ')})` : ''}`
