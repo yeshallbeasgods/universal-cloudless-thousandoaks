@@ -7,6 +7,8 @@ UI tests (Sauce Demo), API tests (OpenWeather), and GitHub Actions CI. Work in p
 
 A Playwright + TypeScript test automation framework targeting the [Sauce Demo](https://www.saucedemo.com) application and the OpenWeather API. Built to demonstrate professional QA engineering practices: page objects delivered through custom fixtures, web-first assertions, strict typing with type-aware linting, tagged test runs, and API testing in the same runner as the UI tests.
 
+Secrets are treated as a first-class concern. The OpenWeather key lives only in `.env` or a GitHub Secret. It is redacted from error messages and report attachments, kept out of traces, and scoped to the single CI step that needs it. CI also fails loudly when the key is missing instead of letting tests skip silently.
+
 ## Tech Stack
 
 - Node.js (version pinned in `.nvmrc`)
@@ -202,7 +204,7 @@ npm run typecheck
 
 ## CI
 
-`.github/workflows/playwright.yml` runs on every push and pull request to `main`, nightly at 06:00 UTC (to catch drift in
+`.github/workflows/playwright.yml` runs on every push and pull request to `main`, nightly at 11:17 UTC (early morning US Central time, to catch drift in
 Sauce Demo and the OpenWeather API), and on demand from the Actions tab.
 
 - **Lint** runs first (`npm run lint` and `npm run typecheck`).

@@ -9,6 +9,14 @@ updates:
           allure:
               patterns:
                   - 'allure*'
+      ignore:
+          # typescript-eslint declares support for TypeScript <6.1.0, so stay on 6.0.x until it supports 7.
+          # Remove this when typescript-eslint's peer range includes the next TypeScript.
+          - dependency-name: typescript
+            update-types: ['version-update:semver-major', 'version-update:semver-minor']
+          # The types should match the Node version in .nvmrc (24). Bump both together when Node moves.
+          - dependency-name: '@types/node'
+            update-types: ['version-update:semver-major']
     - package-ecosystem: github-actions
       directory: /
       schedule:

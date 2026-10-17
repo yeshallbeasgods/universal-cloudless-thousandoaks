@@ -6,8 +6,10 @@ on:
     pull_request:
         branches: [main]
     schedule:
-        # Nightly at 06:00 UTC. Catches drift in Sauce Demo and the OpenWeather API.
-        - cron: '0 6 * * *'
+        # Nightly at 11:17 UTC (6:17 am CDT, 5:17 am CST). Catches drift in Sauce Demo and the OpenWeather API.
+        # Cron ignores daylight saving, so this time sits mid-morning in both seasons. The odd minute avoids
+        # GitHub's busiest moment, the top of the hour, when scheduled runs are most often delayed.
+        - cron: '17 11 * * *'
     workflow_dispatch:
 
 permissions:
@@ -24,10 +26,12 @@ env:
     STANDARD_USER: standard_user
     PASSWORD: secret_sauce
 
+# Pinned instead of ubuntu-latest, which moves to Ubuntu 26 on 2026-10-19. Move to a newer image on
+# purpose, after checking that Playwright supports it, so the nightly run does not break by surprise.
 jobs:
     lint:
         name: Lint
-        runs-on: ubuntu-latest
+        runs-on: ubuntu-24.04
         timeout-minutes: 10
         steps:
             - uses: actions/checkout@v7
@@ -42,7 +46,7 @@ jobs:
     ui:
         name: UI tests
         needs: lint
-        runs-on: ubuntu-latest
+        runs-on: ubuntu-24.04
         timeout-minutes: 20
         steps:
             - uses: actions/checkout@v7
@@ -80,7 +84,7 @@ jobs:
     api:
         name: API tests
         needs: lint
-        runs-on: ubuntu-latest
+        runs-on: ubuntu-24.04
         timeout-minutes: 10
         steps:
             - uses: actions/checkout@v7
