@@ -17,7 +17,7 @@
 	"devDependencies": {
 		"@eslint/js": "^10.0.1",
 		"@playwright/test": "^1.64.0",
-		"@types/node": "^24.19.2",
+		"@types/node": "^26.6.5",
 		"allure": "^3.21.0",
 		"allure-js-commons": "^3.13.0",
 		"allure-playwright": "^3.13.0",
