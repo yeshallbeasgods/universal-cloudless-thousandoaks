@@ -260,9 +260,11 @@ Sauce Demo and the OpenWeather API), and on demand from the Actions tab.
 - **Publish to GitHub Pages** pushes the result to the `gh-pages` branch. It is the only job with write access, it runs
   none of the project's code, and it only runs for `main` and the nightly schedule, never for pull requests. Pages
   serves `gh-pages` at <https://yeshallbeasgods.github.io/universal-cloudless-thousandoaks/>: the landing page at the
-  root, the latest Allure report under `report/`, and the trend history under `history/`.
+  root, the latest Allure report under `report/awesome/`, the trends dashboard under `report/dashboard/`, and the history
+  file under `history/`.
 - Allure's trend charts use a history file (`allurerc.mjs` sets the path). CI copies the last published file in before
-  generating and publishes the updated one, so trends carry from run to run.
+  generating and publishes the updated one, so trends carry from run to run. The dashboard plugin draws them: status per
+  run, current status, and a coverage map built from the epic / feature / story labels.
 
 One-time setup: Pages must be pointed at the branch once, under Settings, Pages, "Deploy from a branch", `gh-pages`,
 `/ (root)`. The branch does not exist until the first publish.
@@ -288,13 +290,14 @@ MIT — see [LICENSE](LICENSE) for details.
 - [x] OpenWeather API tests — schema, data quality, negative cases, one test per city, key redaction
 - [x] Custom terminal reporter and JSON results
 - [x] Allure reporting — labels, failure screenshots and traces, redacted API attachments, environment info
+- [x] CI with GitHub Actions — lint, UI and API jobs, nightly run, artifacts, Dependabot
+- [x] Allure report, trends dashboard and landing page published to GitHub Pages
 
 **In progress**
 
-- [ ] CI and GitHub Pages publishing
+- [ ] A shared status contract and hub page across the portfolio's repos
 
 **Upcoming**
 
 - [ ] Mocking with network interception
-- [ ] CI workflow and reporting
 - [ ] Test-health tracking and manual QA artifacts in `docs/qa/`

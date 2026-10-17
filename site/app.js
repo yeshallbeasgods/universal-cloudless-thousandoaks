@@ -62,8 +62,14 @@ function render(status) {
 	const run = $('link-run')
 	run.hidden = !safeHref(run, status.run?.url)
 
-	if (typeof status.links?.report === 'string') {
+	// Relative links only, so a value in status.json can never send a visitor to another site.
+	if (typeof status.links?.report === 'string' && !status.links.report.includes(':')) {
 		$('link-report').href = status.links.report
+	}
+	const trends = $('link-trends')
+	if (typeof status.links?.trends === 'string' && !status.links.trends.includes(':')) {
+		trends.href = status.links.trends
+		trends.hidden = false
 	}
 	$('facts').hidden = false
 }

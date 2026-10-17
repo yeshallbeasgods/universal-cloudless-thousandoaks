@@ -71,7 +71,8 @@ const status = {
 	run: { id: env.GITHUB_RUN_ID ?? '', url: `${repoUrl}/actions/runs/${env.GITHUB_RUN_ID ?? ''}` },
 	layers,
 	tests,
-	links: { report: 'report/', testHealth: null },
+	// report: the full report. trends: charts across runs (optional; omit it if a repo has no such page).
+	links: { report: 'report/awesome/', trends: 'report/dashboard/', testHealth: null },
 }
 
 fs.mkdirSync(path.dirname(outputFile), { recursive: true })

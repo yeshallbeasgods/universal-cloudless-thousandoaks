@@ -8,4 +8,10 @@ export default defineConfig({
 	historyPath: './allure-history/history.jsonl',
 	appendHistory: true,
 	historyLimit: 30,
+	// Two views of the same results, each in its own folder under allure-report/:
+	// awesome = the full report (suites, steps, attachments), dashboard = charts and trends across runs.
+	plugins: {
+		awesome: { options: {} },
+		dashboard: { options: {} },
+	},
 })
