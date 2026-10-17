@@ -1,3 +1,4 @@
+import { test } from '@playwright/test'
 import type { APIRequestContext, APIResponse } from '@playwright/test'
 import type { ApiResult, CurrentWeather } from './types'
 
@@ -34,9 +35,31 @@ export class OpenWeatherClient {
 			throw new Error(redactApiKey(error instanceof Error ? error.message : String(error)))
 		}
 
+		const status = response.status()
+		const body = (await response.json()) as T
+		await attachSummary(params, status, body)
+
 		// Return only what tests need. Never hand back the response: response.url() contains the key.
-		return { status: response.status(), body: (await response.json()) as T }
+		return { status, body }
 	}
+}
+
+// Adds the request and response to the test's reports (Allure, HTML, JSON). The key is replaced
+// with *** before anything is attached, and the final text goes through redactApiKey as well.
+async function attachSummary(params: Record<string, string>, status: number, body: unknown): Promise<void> {
+	const { appid, ...visibleParams } = params
+	const summary = {
+		request: {
+			method: 'GET',
+			path: '/data/2.5/weather',
+			params: { ...visibleParams, appid: appid === undefined ? '(not sent)' : '***' },
+		},
+		response: { status, body },
+	}
+	await test.info().attach('OpenWeather request and response', {
+		body: redactApiKey(JSON.stringify(summary, null, 2)),
+		contentType: 'application/json',
+	})
 }
 
 export function redactApiKey(text: string): string {

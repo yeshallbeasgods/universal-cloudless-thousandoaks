@@ -14,6 +14,7 @@ A Playwright + TypeScript test automation framework targeting the [Sauce Demo](h
 - dotenv
 - ESLint (typescript-eslint, eslint-plugin-playwright)
 - Prettier
+- Allure 3 (`allure-playwright` reporter, `allure` CLI)
 
 ## Project Structure
 
@@ -33,6 +34,7 @@ universal-cloudless-thousandoaks/
 ├── reporters/
 │   └── clearFailureReporter.ts     # Terminal reporter: failures first, EXPECTED/RECEIVED labels
 ├── test-data/                      # Typed data arrays that drive generated tests
+│   ├── apiKeyCases.ts              # Invalid and missing API key cases
 │   ├── cities.ts                   # Cities for the OpenWeather tests
 │   ├── checkoutCases.ts            # Valid customer and required-field cases
 │   ├── loginCases.ts               # Invalid-login cases, one generated test each
@@ -49,6 +51,7 @@ universal-cloudless-thousandoaks/
 │   └── visual/
 ├── utils/
 │   ├── currency.ts                 # "$29.99" -> 29.99
+│   ├── allureLabels.ts             # Sets Allure epic / feature / story from the spec's path
 │   ├── env.ts                      # requireEnv / optionalEnv: environment variables
 │   ├── openWeatherClient.ts        # Typed API client that redacts the key from errors
 │   └── types.ts                    # Interfaces for OpenWeather responses
@@ -144,13 +147,25 @@ npx playwright show-report
 
 ### Reading failures
 
-Three reports are written on every run:
+Four reports are written on every run:
 
 - **Terminal:** a custom reporter (`reporters/clearFailureReporter.ts`) prints each failure as a block with the
   location (`file:line:col`, clickable in VS Code), the reason, the code frame, `EXPECTED` and `RECEIVED` labels
   instead of Playwright's `-`/`+` diff, and the command to re-run just that test.
 - **HTML:** `npx playwright show-report`.
 - **JSON:** `test-results/results.json`, structured results for scripts and AI agents.
+- **Allure:** raw results go to `allure-results/` on every run (and are cleared at the start of `npm test`). Build and
+  open the report with:
+
+    ```bash
+    npm test
+    npm run report:generate   # writes allure-report/
+    npm run report:open       # serves it in your browser
+    ```
+
+    Tests are grouped by epic (`Web UI` or `API`), feature (the spec file) and story (the test title), set
+    automatically from the file's location by an `auto` fixture. Failed UI tests carry a screenshot and a trace, and
+    API tests carry a request/response summary with the API key replaced by `***`.
 
 The terminal reporter works from the text of Playwright's error messages, so a Playwright upgrade can change what it
 sees. It falls back to the raw message whenever it does not recognize a format, so a failure is never hidden. After
@@ -202,14 +217,16 @@ MIT — see [LICENSE](LICENSE) for details.
 - [x] Login and cart smoke suite
 - [x] Checkout specs, including numeric checks of the totals
 - [x] Special-user coverage (`performance_glitch_user`, `problem_user`, `error_user`)
+- [x] OpenWeather API tests — schema, data quality, negative cases, one test per city, key redaction
+- [x] Custom terminal reporter and JSON results
+- [x] Allure reporting — labels, failure screenshots and traces, redacted API attachments, environment info
 
 **In progress**
 
-- [ ] OpenWeather API tests
+- [ ] CI and GitHub Pages publishing
 
 **Upcoming**
 
-- [ ] API tests — OpenWeather current weather endpoint in the same runner
 - [ ] Mocking with network interception
 - [ ] CI workflow and reporting
 - [ ] Test-health tracking and manual QA artifacts in `docs/qa/`

@@ -5,7 +5,10 @@
 	"scripts": {
 		"typecheck": "tsc --noEmit",
 		"test": "playwright test --pass-with-no-tests",
-		"lint": "eslint ."
+		"lint": "eslint .",
+		"pretest": "node -e \"require('node:fs').rmSync('allure-results', { recursive: true, force: true })\"",
+		"report:generate": "allure generate allure-results --clean",
+		"report:open": "allure open allure-report"
 	},
 	"keywords": [],
 	"author": "",
@@ -15,6 +18,9 @@
 		"@eslint/js": "^10.0.1",
 		"@playwright/test": "^1.64.0",
 		"@types/node": "^24.19.2",
+		"allure": "^3.21.0",
+		"allure-js-commons": "^3.13.0",
+		"allure-playwright": "^3.13.0",
 		"dotenv": "^18.0.7",
 		"eslint": "^10.12.0",
 		"eslint-config-prettier": "^10.1.8",

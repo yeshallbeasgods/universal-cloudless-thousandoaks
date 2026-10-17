@@ -4,10 +4,10 @@ import type { FullResult, Reporter, Suite, TestCase, TestError, TestResult } fro
 
 // A terminal reporter that puts failures first and says plainly what went wrong:
 // where (file:line:col, clickable in VS Code), why, and EXPECTED vs RECEIVED instead of -/+.
-//
-// It works from the text Playwright puts in error.message, so a Playwright upgrade can change
-// what it sees. Every parsing step falls back to the raw message, so a failure is never hidden.
-// After bumping @playwright/test, run a failing test and check the output still looks right.
+
+// It works from the text Playwright puts in error.message, so a Playwright upgrade may necessitate
+// changes to the reporter (run a failing test and check the output still looks right).
+// Every parsing step falls back to the raw message, so a failure is never hidden.
 
 const useColor = Boolean(process.stdout.isTTY) && !process.env.NO_COLOR
 const paint = (code: number, text: string): string => (useColor ? `\u001b[${code}m${text}\u001b[0m` : text)
@@ -22,6 +22,7 @@ const RULE = '─'.repeat(78)
 export default class ClearFailureReporter implements Reporter {
 	private suite: Suite | undefined
 	private startedAt = Date.now()
+	private finishedTests = 0
 
 	printsToStdio(): boolean {
 		return true
@@ -34,6 +35,7 @@ export default class ClearFailureReporter implements Reporter {
 	}
 
 	onTestEnd(test: TestCase, result: TestResult): void {
+		this.finishedTests++
 		console.log(progressLine(test, result))
 	}
 
@@ -43,6 +45,12 @@ export default class ClearFailureReporter implements Reporter {
 
 	onEnd(result: FullResult): void {
 		const tests = this.suite?.allTests() ?? []
+		if (tests.length > 0 && this.finishedTests === 0 && result.status === 'passed') {
+			// `--list` never runs anything, so show what was selected instead of a results summary.
+			tests.forEach((test) => console.log(`  ${shortTitle(test)}  ${dim(test.tags.join(' '))}`))
+			console.log(`\n${tests.length} tests selected (not run)`)
+			return
+		}
 		const failed = tests.filter((test) => test.outcome() === 'unexpected')
 		const flaky = tests.filter((test) => test.outcome() === 'flaky')
 		const skipped = tests.filter((test) => test.outcome() === 'skipped')

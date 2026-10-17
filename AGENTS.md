@@ -17,6 +17,8 @@ npx playwright test --ui                    # UI mode (time-travel debugging)
 npx playwright test --debug                 # inspector
 npx playwright show-report                  # HTML report
 npx playwright show-trace <trace.zip>       # open a trace
+npm run report:generate                     # build the Allure report from allure-results/
+npm run report:open                         # serve the generated report
 npm run lint && npm run typecheck           # must pass before any commit
 ```
 
@@ -30,7 +32,7 @@ Scripts arrive with their tickets. If a command here doesn't exist yet, say so i
 - Strict TypeScript, no `any`. Type API responses with interfaces.
 - Tag every test: `@smoke`, `@regression`, or `@api`.
 - Data-driven cases come from typed arrays in `test-data/`, one generated test per entry. Don't copy-paste tests.
-- Secrets: `OPENWEATHER_API_KEY` comes from the environment (`.env` locally, a GitHub Secret in CI). Never hardcode it, log it, or attach it to reports. Never read or print `.env`. OpenWeather takes the key in the URL, and Playwright prints URLs in errors and traces, so API calls go through `OpenWeatherClient` (`utils/`), which redacts the key. In API specs never use `toBeOK()`, never log URLs or full responses, and keep `trace: 'off'` on the `api` project.
+- Secrets: `OPENWEATHER_API_KEY` comes from the environment (`.env` locally, a GitHub Secret in CI). Never hardcode it, log it, or attach it to reports. Never read or print `.env`. OpenWeather takes the key in the URL, and Playwright prints URLs in errors and traces, so API calls go through `OpenWeatherClient` (`utils/`), which redacts the key. In API specs never use `toBeOK()`, never log URLs or full responses, and keep `trace: 'off'` on the `api` project. Attachments are published in the Allure report, so attach request/response data only through redacted summaries (see `OpenWeatherClient`). Allure epic/feature/story labels are set automatically from the spec path (`utils/allureLabels.ts`); add new spec files to its `features` table.
 - A known app defect gets a test that asserts the correct behavior, marked `test.fail(true, '<reason>')`. Never assert the buggy behavior. Remove the marker when the defect is fixed.
 - Compare money as parsed numbers with `toBeCloseTo(expected, 2)`, never as strings or with `toBe` on a sum.
 - Read environment variables through `requireEnv` (`utils/env.ts`), not raw `process.env`. Turn price text like `$29.99` into numbers with `parseCurrency` (`utils/currency.ts`).
