@@ -1,0 +1,59 @@
+{
+  "request": {
+    "method": "GET",
+    "path": "/data/2.5/weather",
+    "params": {
+      "q": "Chicago",
+      "units": "imperial",
+      "appid": "***"
+    }
+  },
+  "response": {
+    "status": 200,
+    "body": {
+      "coord": {
+        "lon": -87.65,
+        "lat": 41.85
+      },
+      "weather": [
+        {
+          "id": 801,
+          "main": "Clouds",
+          "description": "few clouds",
+          "icon": "02d"
+        }
+      ],
+      "base": "stations",
+      "main": {
+        "temp": 57.13,
+        "feels_like": 55.08,
+        "temp_min": 55.13,
+        "temp_max": 59.02,
+        "pressure": 1031,
+        "humidity": 54,
+        "sea_level": 1031,
+        "grnd_level": 1008
+      },
+      "visibility": 10000,
+      "wind": {
+        "speed": 9.22,
+        "deg": 250
+      },
+      "clouds": {
+        "all": 13
+      },
+      "dt": 1792269679,
+      "sys": {
+        "type": 2,
+        "id": 2075214,
+        "country": "US",
+        "sunrise": 1792238699,
+        "sunset": 1792278394
+      },
+      "timezone": -18000,
+      "id": 4887398,
+      "name": "Chicago",
+      "cod": 200
+    }
+  }
+}
