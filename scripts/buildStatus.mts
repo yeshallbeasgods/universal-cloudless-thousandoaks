@@ -11,15 +11,42 @@ if (!outputFile) {
 }
 
 // Counts come from Allure's own result files, so they match the report the page links to.
+// Every retry attempt is a separate result file with the same historyId, so each test is counted once,
+// by its last attempt. A test that failed and then passed on retry is counted as passed and as flaky.
+interface AllureResult {
+	historyId?: string
+	status?: string
+	stop?: number
+}
+
 const resultsDir = env.ALLURE_RESULTS_DIR ?? 'allure-results'
-const tests = { total: 0, passed: 0, failed: 0, broken: 0, skipped: 0 }
+const tests = { total: 0, passed: 0, failed: 0, broken: 0, skipped: 0, flaky: 0 }
+const finalStatus = new Map<string, { status: string; stop: number }>()
+const hadFailedAttempt = new Set<string>()
+
 if (fs.existsSync(resultsDir)) {
 	for (const file of fs.readdirSync(resultsDir).filter((name) => name.endsWith('-result.json'))) {
-		const { status } = JSON.parse(fs.readFileSync(path.join(resultsDir, file), 'utf8')) as { status?: string }
-		tests.total++
-		if (status === 'passed' || status === 'failed' || status === 'broken' || status === 'skipped') {
-			tests[status]++
+		const result = JSON.parse(fs.readFileSync(path.join(resultsDir, file), 'utf8')) as AllureResult
+		const id = result.historyId ?? file
+		const status = result.status ?? 'unknown'
+		const stop = result.stop ?? 0
+		if (status === 'failed' || status === 'broken') {
+			hadFailedAttempt.add(id)
 		}
+		const previous = finalStatus.get(id)
+		if (!previous || stop >= previous.stop) {
+			finalStatus.set(id, { status, stop })
+		}
+	}
+}
+
+for (const [id, { status }] of finalStatus) {
+	tests.total++
+	if (status === 'passed' || status === 'failed' || status === 'broken' || status === 'skipped') {
+		tests[status]++
+	}
+	if (status === 'passed' && hadFailedAttempt.has(id)) {
+		tests.flaky++
 	}
 }
 
