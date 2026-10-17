@@ -1,0 +1,59 @@
+{
+  "request": {
+    "method": "GET",
+    "path": "/data/2.5/weather",
+    "params": {
+      "q": "Tokyo",
+      "units": "imperial",
+      "appid": "***"
+    }
+  },
+  "response": {
+    "status": 200,
+    "body": {
+      "coord": {
+        "lon": 139.6917,
+        "lat": 35.6895
+      },
+      "weather": [
+        {
+          "id": 801,
+          "main": "Clouds",
+          "description": "few clouds",
+          "icon": "02d"
+        }
+      ],
+      "base": "stations",
+      "main": {
+        "temp": 63.05,
+        "feels_like": 62.02,
+        "temp_min": 61.84,
+        "temp_max": 64.02,
+        "pressure": 1030,
+        "humidity": 63,
+        "sea_level": 1030,
+        "grnd_level": 1029
+      },
+      "visibility": 10000,
+      "wind": {
+        "speed": 6.91,
+        "deg": 340
+      },
+      "clouds": {
+        "all": 18
+      },
+      "dt": 1792279618,
+      "sys": {
+        "type": 2,
+        "id": 268395,
+        "country": "JP",
+        "sunrise": 1792270176,
+        "sunset": 1792310583
+      },
+      "timezone": 32400,
+      "id": 1850144,
+      "name": "Tokyo",
+      "cod": 200
+    }
+  }
+}

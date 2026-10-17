@@ -55,6 +55,19 @@ main {
 	padding: 3rem 1rem 2rem;
 }
 
+.back {
+	display: inline-block;
+	margin-bottom: 1.25rem;
+	color: var(--muted);
+	font-size: 0.9rem;
+	text-decoration: none;
+}
+
+.back:hover,
+.back:focus-visible {
+	color: var(--accent);
+}
+
 .eyebrow {
 	margin: 0;
 	color: var(--accent);
