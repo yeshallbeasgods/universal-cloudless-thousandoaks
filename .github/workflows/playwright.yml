@@ -131,3 +131,90 @@ jobs:
                   name: test-results-api
                   path: test-results
                   retention-days: 14
+
+    # Builds the Allure report and the landing page. Read-only: it runs `npm ci`, so it gets no write access.
+    report:
+        name: Report
+        needs: [lint, ui, api]
+        # Runs after failed test jobs too, so a red run still produces a report. Cancelled runs are skipped.
+        if: ${{ !cancelled() }}
+        runs-on: ubuntu-24.04
+        timeout-minutes: 10
+        steps:
+            - uses: actions/checkout@v7
+              with:
+                  persist-credentials: false
+            - uses: actions/setup-node@v7
+              with:
+                  node-version-file: .nvmrc
+                  cache: npm
+            - run: npm ci
+            - name: Download Allure results
+              uses: actions/download-artifact@v8
+              continue-on-error: true
+              with:
+                  pattern: allure-results-*
+                  path: allure-results
+                  merge-multiple: true
+            # The last published site holds the history file behind Allure's trend charts.
+            # Before the first publish there is no gh-pages branch, so this step is allowed to fail.
+            - name: Fetch the published site
+              uses: actions/checkout@v7
+              continue-on-error: true
+              with:
+                  ref: gh-pages
+                  path: published
+                  persist-credentials: false
+            - name: Carry history forward
+              run: |
+                  mkdir -p allure-history
+                  if [ -f published/history/history.jsonl ]; then
+                    cp published/history/history.jsonl allure-history/history.jsonl
+                  fi
+            # allurerc.mjs appends this run to the history file as it generates.
+            - name: Generate the Allure report
+              if: ${{ hashFiles('allure-results/**') != '' }}
+              run: npx allure generate allure-results --clean
+            - name: Build the site
+              env:
+                  LINT_RESULT: ${{ needs.lint.result }}
+                  UI_RESULT: ${{ needs.ui.result }}
+                  API_RESULT: ${{ needs.api.result }}
+              run: |
+                  mkdir -p publish/history
+                  cp -r site/. publish/
+                  if [ -d allure-report ]; then cp -r allure-report publish/report; fi
+                  if [ -f allure-history/history.jsonl ]; then cp allure-history/history.jsonl publish/history/history.jsonl; fi
+                  node scripts/buildStatus.mts publish/status.json
+            - name: Upload the site
+              uses: actions/upload-artifact@v7
+              with:
+                  name: site
+                  path: publish
+                  retention-days: 14
+
+    # Pushes the built site to the gh-pages branch. The only job with write access, and it runs no project code.
+    publish:
+        name: Publish to GitHub Pages
+        needs: report
+        # Only main and the nightly schedule publish. Pull requests and manual runs on other branches just build.
+        if: ${{ !cancelled() && needs.report.result == 'success' && github.ref == 'refs/heads/main' && github.event_name != 'pull_request' }}
+        runs-on: ubuntu-24.04
+        timeout-minutes: 10
+        permissions:
+            contents: write
+        # Serializes publishing so a push and the nightly run can never write gh-pages at the same time.
+        concurrency:
+            group: pages-publish
+            cancel-in-progress: false
+        steps:
+            - uses: actions/download-artifact@v8
+              with:
+                  name: site
+                  path: publish
+            # keep_files leaves earlier files in place and overwrites the ones that changed.
+            - uses: peaceiris/actions-gh-pages@v4
+              with:
+                  github_token: ${{ secrets.GITHUB_TOKEN }}
+                  publish_dir: ./publish
+                  keep_files: true

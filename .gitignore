@@ -9,6 +9,8 @@ playwright/.cache/
 playwright/.auth/
 allure-results/
 allure-report/
+allure-history/
+publish/
 
 # Environment
 .env

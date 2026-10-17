@@ -36,6 +36,9 @@ universal-cloudless-thousandoaks/
 │   └── LoginPage.ts
 ├── reporters/
 │   └── clearFailureReporter.ts     # Terminal reporter: failures first, EXPECTED/RECEIVED labels
+├── scripts/
+│   └── buildStatus.mts             # Writes status.json for the landing page (run by CI)
+├── site/                           # Landing page published to GitHub Pages (index.html, style.css, app.js)
 ├── test-data/                      # Typed data arrays that drive generated tests
 │   ├── apiKeyCases.ts              # Invalid and missing API key cases
 │   ├── cities.ts                   # Cities for the OpenWeather tests
@@ -58,6 +61,7 @@ universal-cloudless-thousandoaks/
 │   ├── env.ts                      # requireEnv / optionalEnv: environment variables
 │   ├── openWeatherClient.ts        # Typed API client that redacts the key from errors
 │   └── types.ts                    # Interfaces for OpenWeather responses
+├── allurerc.mjs                    # Allure 3 config: report name, history file
 ├── playwright.config.ts            # baseURL, reporters, trace, projects
 ├── tsconfig.json
 ├── eslint.config.mjs
@@ -170,6 +174,40 @@ Four reports are written on every run:
     automatically from the file's location by an `auto` fixture. Failed UI tests carry a screenshot and a trace, and
     API tests carry a request/response summary with the API key replaced by `***`.
 
+#### What a failure looks like
+
+Real output from the terminal reporter for a deliberately failing check (code frame trimmed). The location is
+clickable in VS Code, and `EXPECTED` / `RECEIVED` replace Playwright's `-` / `+` markers:
+
+```text
+──────────────────────────────────────────────────────────────────────────────
+✘ FAILED  [chromium] demo: toMatchObject mismatch  @api
+──────────────────────────────────────────────────────────────────────────────
+Where  tests/e2e/zz-reporter-demo.spec.ts:7:15
+Why    expect(received).toMatchObject(expected)
+
+Differences  (EXPECTED = what the test asked for, RECEIVED = what came back)
+
+         Object {
+           "cod": 200,
+           "main": Object {
+             "humidity": 66,
+EXPECTED     "temp": Any<String>,
+RECEIVED     "temp": 55.1,
+           },
+EXPECTED   "name": "Chicago ",
+RECEIVED   "name": "Chicago",
+         }
+
+Code
+>  7 | 	expect(body).toMatchObject({ name: 'Chicago ', main: { temp: expect.any(String), ... } })
+     | 	             ^
+
+Re-run:  npx playwright test tests/e2e/zz-reporter-demo.spec.ts:6 --project=chromium
+```
+
+The same failure also lands in the HTML report, the Allure report and `test-results/results.json`.
+
 The terminal reporter works from the text of Playwright's error messages, so a Playwright upgrade can change what it
 sees. It falls back to the raw message whenever it does not recognize a format, so a failure is never hidden. After
 bumping `@playwright/test`, run a failing test and check that the output still reads correctly.
@@ -200,6 +238,7 @@ npm run typecheck
 - **Tagged runs** by `@smoke`, `@regression` and `@api`.
 - **Data-driven tests.** Typed arrays in `test-data/` generate one named test per case.
 - **Numeric checks on money.** Totals are parsed to numbers and compared with `toBeCloseTo(x, 2)`, which absorbs floating-point noise.
+- **Readable failures.** A custom terminal reporter shows where, why and EXPECTED vs RECEIVED for every failure (see [What a failure looks like](#what-a-failure-looks-like)).
 - **Known defects documented as tests.** Sauce Demo's `problem_user` and `error_user` have real bugs. Those tests assert the correct behavior and use `test.fail()`, so they pass while the bug exists and start failing the day it is fixed.
 
 ## CI
@@ -215,6 +254,18 @@ Sauce Demo and the OpenWeather API), and on demand from the Actions tab.
   Dependabot PRs read **Dependabot secrets**, so the key is stored there as well.
 - Every run uploads `allure-results-*` and `playwright-report-*`. Failed runs also upload `test-results-*` (traces and
   screenshots). Download them from the run's summary page and open a trace with `npx playwright show-trace`.
+- **Report** builds the Allure report from both test jobs' results, even when a test job failed. It also builds the
+  landing page in `site/` and a `status.json` (per-layer results, test counts, commit, run link) with
+  `scripts/buildStatus.mts`. This job is read-only.
+- **Publish to GitHub Pages** pushes the result to the `gh-pages` branch. It is the only job with write access, it runs
+  none of the project's code, and it only runs for `main` and the nightly schedule, never for pull requests. Pages
+  serves `gh-pages` at <https://yeshallbeasgods.github.io/universal-cloudless-thousandoaks/>: the landing page at the
+  root, the latest Allure report under `report/`, and the trend history under `history/`.
+- Allure's trend charts use a history file (`allurerc.mjs` sets the path). CI copies the last published file in before
+  generating and publishes the updated one, so trends carry from run to run.
+
+One-time setup: Pages must be pointed at the branch once, under Settings, Pages, "Deploy from a branch", `gh-pages`,
+`/ (root)`. The branch does not exist until the first publish.
 
 ## Working with AI agents
 

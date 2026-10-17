@@ -13,7 +13,11 @@ export default defineConfig(
 			'blob-report/',
 			'allure-results/',
 			'allure-report/',
+			'allure-history/',
+			'publish/',
 			'eslint.config.mjs',
+			'allurerc.mjs',
+			'site/', // static landing page: plain browser JavaScript, not part of the TypeScript project
 		],
 	},
 	eslint.configs.recommended,
