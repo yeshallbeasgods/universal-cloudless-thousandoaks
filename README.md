@@ -266,9 +266,9 @@ This is the second project in a series. The first, [ephemeral-blazing-berserker]
 | `requirements.txt` and a virtual environment                     | `package.json`, a lockfile and `node_modules`. Node itself is pinned in `.nvmrc`.                                                                       |
 | `webdriver-manager`                                              | `npx playwright install`. Browsers are pinned to the library version.                                                                                   |
 | `DebugUtils.dump_page_state`: screenshot, elements and JS errors | A trace per failure (DOM snapshots, network, console), a screenshot, and an `error-context.md` page snapshot.                                           |
-| pytest-html (Allure planned)                                     | Playwright's HTML report, an Allure 3 report with a trends dashboard, a custom terminal reporter and a JSON results file.                               |
+| pytest-html locally, Allure 3 (allure-pytest) when published     | Playwright's HTML report locally, an Allure 3 report with a trends dashboard when published, a custom terminal reporter and a JSON results file.        |
 | `ruff`                                                           | ESLint (typescript-eslint, eslint-plugin-playwright) and Prettier.                                                                                      |
-| Separate lint and test workflows                                 | One workflow: lint, then UI and API jobs, then report and publish, plus a nightly schedule.                                                             |
+| One `ci.yml`: lint, smoke tests, report and Pages publish        | One workflow: lint, then UI and API jobs in parallel, then report and publish, plus a nightly schedule.                                                 |
 | Mobile emulation through Chrome options                          | Not covered in this repo. Playwright's device descriptors are the equivalent.                                                                           |
 
 ### What got simpler
