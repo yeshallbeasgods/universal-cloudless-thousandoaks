@@ -1,1 +1,1 @@
-{"id":"02c4e949fac4a1689f3cff94e50e5b9f.259864bbb84e0941359ea9e4c0db04ac","fullName":"api/openweather.spec.ts › OpenWeather errors › returns 401 for no key","name":"returns 401 for no key","status":"passed","testResultsByEnv":{"default":"9c3859a90511a458b4f20b05aab44602"}}
+{"id":"02c4e949fac4a1689f3cff94e50e5b9f.259864bbb84e0941359ea9e4c0db04ac","fullName":"api/openweather.spec.ts › OpenWeather errors › returns 401 for no key","name":"returns 401 for no key","status":"passed","testResultsByEnv":{"default":"0a212e4d3032d30ea950f0b5300156b0"}}
