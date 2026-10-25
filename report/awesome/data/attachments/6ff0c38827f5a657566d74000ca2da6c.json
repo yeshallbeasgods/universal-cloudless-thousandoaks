@@ -1,0 +1,60 @@
+{
+  "request": {
+    "method": "GET",
+    "path": "/data/2.5/weather",
+    "params": {
+      "q": "Andalusia",
+      "units": "imperial",
+      "appid": "***"
+    }
+  },
+  "response": {
+    "status": 200,
+    "body": {
+      "coord": {
+        "lon": -86.4833,
+        "lat": 31.3085
+      },
+      "weather": [
+        {
+          "id": 800,
+          "main": "Clear",
+          "description": "clear sky",
+          "icon": "01d"
+        }
+      ],
+      "base": "stations",
+      "main": {
+        "temp": 61.38,
+        "feels_like": 60.55,
+        "temp_min": 60.75,
+        "temp_max": 64.99,
+        "pressure": 1028,
+        "humidity": 71,
+        "sea_level": 1028,
+        "grnd_level": 1019
+      },
+      "visibility": 10000,
+      "wind": {
+        "speed": 10.36,
+        "deg": 70,
+        "gust": 20.71
+      },
+      "clouds": {
+        "all": 0
+      },
+      "dt": 1792940316,
+      "sys": {
+        "type": 1,
+        "id": 3078,
+        "country": "US",
+        "sunrise": 1792929357,
+        "sunset": 1792969426
+      },
+      "timezone": -18000,
+      "id": 4830099,
+      "name": "Andalusia",
+      "cod": 200
+    }
+  }
+}
