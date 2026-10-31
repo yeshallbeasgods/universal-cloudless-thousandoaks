@@ -1,0 +1,63 @@
+{
+  "request": {
+    "method": "GET",
+    "path": "/data/2.5/weather",
+    "params": {
+      "q": "Sydney",
+      "units": "imperial",
+      "appid": "***"
+    }
+  },
+  "response": {
+    "status": 200,
+    "body": {
+      "coord": {
+        "lon": 151.2073,
+        "lat": -33.8679
+      },
+      "weather": [
+        {
+          "id": 500,
+          "main": "Rain",
+          "description": "light rain",
+          "icon": "10n"
+        }
+      ],
+      "base": "stations",
+      "main": {
+        "temp": 68.94,
+        "feels_like": 68.68,
+        "temp_min": 66.36,
+        "temp_max": 70.72,
+        "pressure": 1011,
+        "humidity": 67,
+        "sea_level": 1011,
+        "grnd_level": 1006
+      },
+      "visibility": 10000,
+      "wind": {
+        "speed": 4,
+        "deg": 287,
+        "gust": 8.99
+      },
+      "rain": {
+        "1h": 0.11
+      },
+      "clouds": {
+        "all": 12
+      },
+      "dt": 1793462746,
+      "sys": {
+        "type": 2,
+        "id": 2018875,
+        "country": "AU",
+        "sunrise": 1793472912,
+        "sunset": 1793521332
+      },
+      "timezone": 39600,
+      "id": 2147714,
+      "name": "Sydney",
+      "cod": 200
+    }
+  }
+}
