@@ -1,0 +1,59 @@
+{
+  "request": {
+    "method": "GET",
+    "path": "/data/2.5/weather",
+    "params": {
+      "q": "Chicago",
+      "units": "imperial",
+      "appid": "***"
+    }
+  },
+  "response": {
+    "status": 200,
+    "body": {
+      "coord": {
+        "lon": -87.65,
+        "lat": 41.85
+      },
+      "weather": [
+        {
+          "id": 300,
+          "main": "Drizzle",
+          "description": "light intensity drizzle",
+          "icon": "09d"
+        }
+      ],
+      "base": "stations",
+      "main": {
+        "temp": 59.4,
+        "feels_like": 59.27,
+        "temp_min": 58.12,
+        "temp_max": 60.13,
+        "pressure": 1016,
+        "humidity": 90,
+        "sea_level": 1016,
+        "grnd_level": 994
+      },
+      "visibility": 10000,
+      "wind": {
+        "speed": 12.66,
+        "deg": 180
+      },
+      "clouds": {
+        "all": 100
+      },
+      "dt": 1793652057,
+      "sys": {
+        "type": 2,
+        "id": 2075214,
+        "country": "US",
+        "sunrise": 1793622247,
+        "sunset": 1793659446
+      },
+      "timezone": -21600,
+      "id": 4887398,
+      "name": "Chicago",
+      "cod": 200
+    }
+  }
+}
