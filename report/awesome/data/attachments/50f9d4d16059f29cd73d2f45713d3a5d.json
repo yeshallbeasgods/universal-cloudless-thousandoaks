@@ -1,0 +1,59 @@
+{
+  "request": {
+    "method": "GET",
+    "path": "/data/2.5/weather",
+    "params": {
+      "q": "London",
+      "units": "imperial",
+      "appid": "***"
+    }
+  },
+  "response": {
+    "status": 200,
+    "body": {
+      "coord": {
+        "lon": -0.1257,
+        "lat": 51.5085
+      },
+      "weather": [
+        {
+          "id": 721,
+          "main": "Haze",
+          "description": "haze",
+          "icon": "50n"
+        }
+      ],
+      "base": "stations",
+      "main": {
+        "temp": 44.49,
+        "feels_like": 39.07,
+        "temp_min": 43.5,
+        "temp_max": 46.36,
+        "pressure": 1015,
+        "humidity": 93,
+        "sea_level": 1015,
+        "grnd_level": 1012
+      },
+      "visibility": 3900,
+      "wind": {
+        "speed": 10.36,
+        "deg": 70
+      },
+      "clouds": {
+        "all": 100
+      },
+      "dt": 1794259676,
+      "sys": {
+        "type": 2,
+        "id": 2075535,
+        "country": "GB",
+        "sunrise": 1794208068,
+        "sunset": 1794241254
+      },
+      "timezone": 0,
+      "id": 2643743,
+      "name": "London",
+      "cod": 200
+    }
+  }
+}
