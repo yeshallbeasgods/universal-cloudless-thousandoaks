@@ -1,0 +1,18 @@
+{
+  "request": {
+    "method": "GET",
+    "path": "/data/2.5/weather",
+    "params": {
+      "q": "Nowhereville-xyz",
+      "units": "imperial",
+      "appid": "***"
+    }
+  },
+  "response": {
+    "status": 404,
+    "body": {
+      "cod": "404",
+      "message": "city not found"
+    }
+  }
+}
