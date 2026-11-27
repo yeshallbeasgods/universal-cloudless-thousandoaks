@@ -1,0 +1,18 @@
+{
+  "request": {
+    "method": "GET",
+    "path": "/data/2.5/weather",
+    "params": {
+      "q": "Chicago",
+      "units": "imperial",
+      "appid": "***"
+    }
+  },
+  "response": {
+    "status": 401,
+    "body": {
+      "cod": 401,
+      "message": "Invalid API key. Please see https://openweathermap.org/faq#error401 for more info."
+    }
+  }
+}
